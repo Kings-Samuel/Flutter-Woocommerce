@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="app_name">Flutter WooCommerce</string>
+<string name="facebook_app_id">4989718514457099</string>
+<string name="fb_login_protocol_scheme">fb1234</string>
+<string name="facebook_client_token">59e1f0d73bc749e535a2b2c06c9ed7be</string>
+</resources>
