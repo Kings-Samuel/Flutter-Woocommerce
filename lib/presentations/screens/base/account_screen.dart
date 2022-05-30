@@ -8,6 +8,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:store_redirect/store_redirect.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:woocommerce/constants/api_constants.dart';
 import 'package:woocommerce/presentations/screens/about_developer.dart';
 import 'package:woocommerce/presentations/screens/report_bugs.dart';
 import 'package:woocommerce/presentations/screens/saved_cards_screen.dart';
@@ -65,6 +66,9 @@ class _AccountScreenState extends State<AccountScreen> {
     submitButtonText: 'Submit',
   );
 
+  String? _userName;
+  String? _userEmail;
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -112,9 +116,13 @@ class _AccountScreenState extends State<AccountScreen> {
                                     title: const Text('Report Bugs'),
                                     onTap: () {
                                       Navigator.of(context, rootNavigator: true).pop(context);
+                                      printToConsole(_userName! + ' ' + _userEmail!);
                                       pushNewScreen(
                                         context,
-                                        screen: const ReportBugs(),
+                                        screen: ReportBugs(
+                                          username: _userName!,
+                                          email: _userEmail!,
+                                        ),
                                         withNavBar: false,
                                         pageTransitionAnimation: PageTransitionAnimation.cupertino,
                                       );
@@ -125,9 +133,13 @@ class _AccountScreenState extends State<AccountScreen> {
                                     title: const Text('Suggest New Feature'),
                                     onTap: () {
                                       Navigator.of(context, rootNavigator: true).pop(context);
+                                      printToConsole(_userName! + ' ' + _userEmail!);
                                       pushNewScreen(
                                         context,
-                                        screen: const SuggestFeature(),
+                                        screen:  SuggestFeature(
+                                          username: _userName!,
+                                          email: _userEmail!,
+                                        ),
                                         withNavBar: false,
                                         pageTransitionAnimation: PageTransitionAnimation.cupertino,
                                       );
@@ -177,6 +189,9 @@ class _AccountScreenState extends State<AccountScreen> {
         future: SharedService.loginDetails(),
         builder: (BuildContext context, AsyncSnapshot<LoginResponseModel?> loginModel) {
           if (loginModel.hasData) {
+            _userName = loginModel.data!.data!.firstName! + ' ' + loginModel.data!.data!.lastName!;
+            _userEmail = loginModel.data!.data!.email!;
+
             return ListView(
               children: [
                 Container(
@@ -276,6 +291,16 @@ class _AccountScreenState extends State<AccountScreen> {
                       _buildListTile(Icons.share, "Share", "Share app with friends, family and colleagues", () {
                         Share.share(title, subject: subject);
                       }),
+                      //visit site
+                      _buildListTile(Icons.web, "Visit FWo Demo Store Site", APIconstants.url.split('/w')[0], () async {
+                        await launchUrl(
+      Uri.parse(APIconstants.url.split('/w')[0]),
+      mode: LaunchMode.inAppWebView,
+      webViewConfiguration: const WebViewConfiguration(
+        enableJavaScript : true,
+      ),
+    );
+                      }),
                       //reset password
                       _buildListTile(Icons.lock, "Reset Password", "Change your password for security reasons", () {
                         pushNewScreen(
@@ -290,8 +315,8 @@ class _AccountScreenState extends State<AccountScreen> {
                         pushNewScreen(
                           context,
                           screen: DeleteAccount(
-                            userEmail: loginModel.data!.data!.email!,
-                            userName: loginModel.data!.data!.firstName! + ' ' + loginModel.data!.data!.lastName!,
+                            email: loginModel.data!.data!.email!,
+                            username: loginModel.data!.data!.firstName! + ' ' + loginModel.data!.data!.lastName!,
                           ),
                           withNavBar: false, // OPTIONAL VALUE. True by default.
                           pageTransitionAnimation: PageTransitionAnimation.cupertino,

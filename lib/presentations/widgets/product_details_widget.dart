@@ -81,7 +81,6 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
 
   @override
   Widget build(BuildContext context) {
-
     // watch wishlist provider
     var wishlistProvider2 = context.watch<WishListProvider>();
 
@@ -192,6 +191,8 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
 
                   cartProvider.addToCart(cartProducts, (val) {
                     Provider.of<LoaderProvider>(context, listen: false).setLoadingStatus(false);
+
+                    snackbar(context, '✅ Product successfully added to cart', Colors.white, Colors.green);
                   });
                 },
                 child: Padding(
@@ -262,8 +263,8 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                     return ElevatedButton(
                       onPressed: () {
                         wishlistProvider2.removeFromWishlist(widget.data!.id.toString()).then((value) {
-                          snackbar(context, '🗑  ${widget.data!.name} has been removed from your wishlist', Colors.white,
-                              Colors.black);
+                          snackbar(context, '🗑  ${widget.data!.name} has been removed from your wishlist',
+                              Colors.white, Colors.black);
                           setState(() {});
                         });
                       },

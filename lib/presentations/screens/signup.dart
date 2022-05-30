@@ -1,4 +1,5 @@
 import 'package:community_material_icon/community_material_icon.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -8,9 +9,11 @@ import 'package:woocommerce/presentations/screens/login.dart';
 import 'package:woocommerce/presentations/widgets/elevated_button.dart';
 import 'package:woocommerce/presentations/widgets/snackbar.dart';
 import 'package:woocommerce/utils/email_validator.dart';
+import '../../services/providers/email_provider.dart';
 import '../../services/woocommerce_api_service.dart';
 import '../widgets/form_helper.dart';
 import '../widgets/progress_indicator_modal.dart';
+import 'privacy_policy.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -66,7 +69,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 style: TextStyle(fontFamily: 'baloo da 2', fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
-            const SizedBox(height: 50),
+            const SizedBox(height: 25),
             //form
             Form(
                 child: Column(children: [
@@ -199,21 +202,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
             //sign up with social media
             const SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text(
-                  'Or Sign up with',
-                  style: TextStyle(fontSize: 14, fontFamily: 'Baloo Da 2', fontWeight: FontWeight.w500),
-                ),
-                SizedBox(width: 10),
-                Icon(Icons.arrow_forward_ios, size: 14),
-              ],
+            const Center(
+              child: Text(
+                '<<<   Or Sign up with   >>>',
+                style: TextStyle(fontSize: 14, fontFamily: 'Baloo Da 2', fontWeight: FontWeight.w500),
+              ),
             ),
             const SizedBox(height: 10),
-            elevatedButton(icon: Icons.facebook, text: 'Facebook', onPressed: facebookSignIn, backgroundColor: Colors.blueAccent),
+            elevatedButton(
+                icon: Icons.facebook, text: 'Facebook', onPressed: facebookSignIn, backgroundColor: Colors.blueAccent),
             const SizedBox(height: 10),
-            elevatedButton(icon: CommunityMaterialIcons.google, text: 'Google', onPressed: googleSignIn)
+            elevatedButton(icon: CommunityMaterialIcons.google, text: 'Google', onPressed: googleSignIn),
+
+            const SizedBox(height: 50),
+            RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                    text: 'Visit our ',
+                    style: const TextStyle(
+                        fontFamily: 'baloo da 2', fontWeight: FontWeight.w500, fontSize: 12, color: Colors.black),
+                    children: [
+                      TextSpan(
+                          text: 'privacy policy',
+                          style: const TextStyle(
+                              fontFamily: 'baloo da 2', fontWeight: FontWeight.bold, fontSize: 13, color: Colors.red),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PrivacyPolicy()));
+                            }),
+                      const TextSpan(
+                          text: ' page here',
+                          style: TextStyle(
+                              fontFamily: 'baloo da 2',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12,
+                              color: Colors.black)),
+                    ])),
           ],
         ),
       ),
@@ -234,6 +258,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void submit() {
+    var emailProvider = Provider.of<EmailProvider>(context, listen: false);
+
     if (validateAndSave()) {
       debugPrint('${_customerModel.toJson()}');
       setState(() {
@@ -241,16 +267,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
 
       _apiService.createCustomer(_customerModel).then((ret) {
-        setState(() {
+        if (ret) {
+          emailProvider.sendEmail(
+            serviceId: 'service_bm9ueyh', 
+            templateId: 'template_4jxouqb', 
+            userId: 'rzOO7Q2LMKs_8SeqP',
+            parameters: {
+              'user_name': _customerModel.firstName! + ' ' + _customerModel.lastName!,
+              'user_email': _customerModel.email,
+            }, 
+          );
+          setState(() {
           isApiCallProcess = false;
         });
-
-        if (ret) {
           snackbar(context, "✅✅✅ Account created successfully. Please login to continue.", Colors.white, Colors.green);
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen()));          
         } else {
-          snackbar(context, "❌❌❌ Invalid or existing email id. Please check your email and try again", Colors.white,
-              Colors.redAccent);
+          setState(() {
+        isApiCallProcess = false;
+      });
+          snackbar(context, "❌❌❌ Invalid or existing email id. Ensure there are no white spaces after your field texts",
+              Colors.white, Colors.redAccent);
         }
       });
     }

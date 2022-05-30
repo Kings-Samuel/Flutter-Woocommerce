@@ -95,6 +95,8 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+//display intro screen on first time app launch
+
 class FirstScreen extends StatefulWidget {
   const FirstScreen({Key? key}) : super(key: key);
 
@@ -102,7 +104,6 @@ class FirstScreen extends StatefulWidget {
   FirstScreenState createState() => FirstScreenState();
 }
 
-//display intro screen on first time app launch
 class FirstScreenState extends State<FirstScreen> with AfterLayoutMixin<FirstScreen> {
   Future checkFirstSeen() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

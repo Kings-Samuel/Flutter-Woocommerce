@@ -37,16 +37,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return IntroductionScreen(
         showDoneButton: true,
         showNextButton: true,
-        showSkipButton: true,
-        skip: const Text(
-          'Skip',
-          style: TextStyle(
-            fontFamily: 'baloo da 2',
-            fontWeight: FontWeight.w500,
-            fontSize: 17,
-            color: Colors.red
-          ),
-        ),
+        // showSkipButton: true,
+        // skip: const Text(
+          // 'Skip',
+        //   style: TextStyle(
+        //     fontFamily: 'baloo da 2',
+        //     fontWeight: FontWeight.w500,
+        //     fontSize: 17,
+        //     color: Colors.red
+        //   ),
+        // ),
         next: const Text(
           'Next',
           style: TextStyle(
@@ -69,8 +69,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         pages: [
           PageViewModel(
             title: 'FWOO Demo Store',
-            body: 'Welcome to the FWOO Demo Store. This is a demo store that is used to showcase the functionality of the Flutter and Woocommerce.',
-            // image: Image.asset('assets/onboarding1.png'),
+            body: 'Welcome to the FWOO Demo Store. This is a demo store that is used to showcase the functionality of the Flutter and Woocommerce. Some important info are in the next slides.',
+            // image: Image.asset('assets/onboarding/card.jpg'),
             decoration: const PageDecoration(
               fullScreen: true,
               imageAlignment: Alignment.center,
@@ -81,34 +81,44 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
 
           PageViewModel(
-            title: '',
-            body: '',
-            image: Image.asset('assets/onboarding/1.png'),
+            title: 'Demo credit cards creation',
+            body: 'Since this is a demo app, we have created some credit cards for you to use. You can use them to test the functionality of the app. All the payment options are in test mode',
+            image: Image.asset('assets/onboarding/card.jpg'),
             decoration: const PageDecoration(
-              fullScreen: true,
-              pageColor: Colors.red,
+              fullScreen: false,
+              imageAlignment: Alignment.center,
+              imagePadding: EdgeInsets.zero,
+              titlePadding: EdgeInsets.zero,
+              footerPadding: EdgeInsets.zero,
                ),
           ),
 
           PageViewModel(
-            title: '',
-            body: '',
-            image: Image.asset('assets/onboarding/2.png'),
+            title: 'How to use cards',
+            body: '''
+1. The first card is for Paystack payment gateway.
+2. The second and third cards are for Stripe payment gateway.
+3. For Paypal, use the following sandbox credentials:
+  - Email: sb-uqx5b8986025@personal.example.com
+  - Password: ^kO026/+
+
+  You should screenshot the credentials for later use.
+''',
+            image: Image.asset('assets/onboarding/checkout.jpg'),
             decoration: const PageDecoration(
-              fullScreen: true,
-              pageColor: Colors.red,
+              fullScreen: false,
                ),
           ),
 
-           PageViewModel(
-            title: '',
-            body: '',
-            image: Image.asset('assets/onboarding/3.png'),
+          PageViewModel(
+            title: 'WooCommerce Admin App',
+            body: 'If you want to use the WooCommerce Admin App so you can manage your store from your mobile device, visit your app store and search for WooCommerce.',
+            image: Image.asset('assets/onboarding/woocommerce_admin.PNG'),
             decoration: const PageDecoration(
-              fullScreen: true,
-              pageColor: Colors.red,
+              fullScreen: false,
                ),
           ),
+
         ],
       );
   }

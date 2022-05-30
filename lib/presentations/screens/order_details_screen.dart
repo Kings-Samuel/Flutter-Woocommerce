@@ -22,6 +22,7 @@ class OrderDetailsScreen extends StatefulWidget {
 }
 
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
+
   //screenshot key
   final GlobalKey _key = GlobalKey();
 
@@ -130,7 +131,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 child: TextButton(
               onPressed: () {
                 Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => OrderCancellattionScreen(model: widget.model)));
+                    .push(MaterialPageRoute(builder: (context) => OrderCancellattionScreen(
+                      orderId: widget.model.orderId.toString(),
+                      userEmail: widget.model.billing!.email!,
+                      userName: widget.model.billing!.firstName! + ' ' + widget.model.billing!.lastName!,
+                    )));
               },
               child: const Text(
                 'Request Cancellation',

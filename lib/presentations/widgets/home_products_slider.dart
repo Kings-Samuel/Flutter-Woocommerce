@@ -30,7 +30,7 @@ class _HomeProductSliderState extends State<HomeProductSlider> {
           );
         } else {
           return Container(
-            margin: const EdgeInsets.all(5),
+            margin: const EdgeInsets.only(top: 0, right: 5, left: 5, bottom: 5),
             child: Column(
               children: [
                 Row(
@@ -65,7 +65,6 @@ class _HomeProductSliderState extends State<HomeProductSlider> {
                         ))
                   ],
                 ),
-                const SizedBox(height: 5),
                 _buildList(
                   snapshot.data!,
                 ),
@@ -79,7 +78,7 @@ class _HomeProductSliderState extends State<HomeProductSlider> {
 
   Widget _buildList(List<Product> items) {
     return SizedBox(
-      height: 230,
+      height: 225,
       child: ListView(
         shrinkWrap: true,
         physics: const ClampingScrollPhysics(),

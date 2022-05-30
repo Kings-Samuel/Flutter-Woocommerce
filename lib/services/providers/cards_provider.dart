@@ -143,4 +143,45 @@ class CardsProvider with ChangeNotifier {
     prefs.remove('card3');
     notifyListeners();
   }
+
+  //create demo cards on customer login
+  Future createDemoCards() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    CreditCardsModel creditCardModel = CreditCardsModel(
+      cardNumber: '4084 0840 8408 4081',
+      expiryDate: '12/24',
+      cvv: '408',
+      cardHolderName: 'John Doe',
+    );
+
+    String card1 = jsonEncode(creditCardModel);
+
+    prefs.setString('card1', card1);
+
+    CreditCardsModel creditCardModel2 = CreditCardsModel(
+      cardNumber: '4242 4242 4242 4242',
+      expiryDate: '03/24',
+      cvv: '123',
+      cardHolderName: 'John A. Doe',
+    );
+
+    String card2 = jsonEncode(creditCardModel2);
+
+    prefs.setString('card2', card2);
+
+    CreditCardsModel creditCardModel3 = CreditCardsModel(
+      cardNumber: '4111111111111111',
+      expiryDate: '12/20',
+      cvv: '123',
+      cardHolderName: 'John Doe A.',
+    );
+
+    String card3 = jsonEncode(creditCardModel3);
+
+    prefs.setString('card3', card3);
+
+    notifyListeners();
+  }
 }
+

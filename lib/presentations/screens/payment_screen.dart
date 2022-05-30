@@ -11,6 +11,7 @@ import '../../models/credit_cards_model.dart';
 import '../../models/customer_detail.dart';
 import '../../models/login_response.dart';
 import '../../services/providers/cards_provider.dart';
+import '../../services/providers/email_provider.dart';
 import '../../utils/checkout_base.dart';
 import '../../utils/shared_prefs.dart';
 import 'package:flutter_paystack/flutter_paystack.dart';
@@ -33,6 +34,7 @@ class PaymentScreen extends CheckoutBase {
 class _PaymentScreenState extends CheckoutBaseState<PaymentScreen> {
   int? customerId;
   String? customerEmail;
+  String? username;
   LoginResponseModel? loginResponseModel;
   bool isLoading = false;
   bool? isNoCard;
@@ -66,6 +68,7 @@ class _PaymentScreenState extends CheckoutBaseState<PaymentScreen> {
     setState(() {
       customerId = loginResponseModel!.data!.id;
       customerEmail = loginResponseModel!.data!.email;
+      username = loginResponseModel!.data!.firstName! + ' ' + loginResponseModel!.data!.lastName!;
     });
   }
 
@@ -184,9 +187,7 @@ class _PaymentScreenState extends CheckoutBaseState<PaymentScreen> {
                                         ? Container()
                                         : buildCard(
                                             cardNumber: cardNumber1!,
-                                            cardNumberConcealed: cardNumber1!.substring(0, 4) +
-                                                ' **** **** ' +
-                                                cardNumber1!.substring(15, 19),
+                                            cardNumberConcealed: cardNumber1!.substring(0, 4) + ' **** **** ****',
                                             cardHolderName: card1.data!.cardHolderName!,
                                             expiryDate: card1.data!.expiryDate!,
                                             cvv: card1.data!.cvv!),
@@ -194,9 +195,7 @@ class _PaymentScreenState extends CheckoutBaseState<PaymentScreen> {
                                         ? Container()
                                         : buildCard(
                                             cardNumber: cardNumber2!,
-                                            cardNumberConcealed: cardNumber2!.substring(0, 4) +
-                                                ' **** **** ' +
-                                                cardNumber2!.substring(15, 19),
+                                            cardNumberConcealed: cardNumber2!.substring(0, 4) + ' **** **** ****',
                                             cardHolderName: card2.data!.cardHolderName!,
                                             expiryDate: card2.data!.expiryDate!,
                                             cvv: card2.data!.cvv!),
@@ -204,9 +203,7 @@ class _PaymentScreenState extends CheckoutBaseState<PaymentScreen> {
                                         ? Container()
                                         : buildCard(
                                             cardNumber: cardNumber3!,
-                                            cardNumberConcealed: cardNumber3!.substring(0, 4) +
-                                                ' **** **** ' +
-                                                cardNumber3!.substring(15, 19),
+                                            cardNumberConcealed: cardNumber3!.substring(0, 4) + ' **** **** ****',
                                             cardHolderName: card3.data!.cardHolderName!,
                                             expiryDate: card3.data!.expiryDate!,
                                             cvv: card3.data!.cvv!),
@@ -385,9 +382,9 @@ class _PaymentScreenState extends CheckoutBaseState<PaymentScreen> {
           }),
     ))
         .then((value) {
-        Future.delayed(const Duration(seconds: 5), () async {
-          await _onPaymentSuccessful(paymentMethod: 'Paypal', isPaid: true);
-        });
+      Future.delayed(const Duration(seconds: 5), () async {
+        await _onPaymentSuccessful(paymentMethod: 'Paypal', isPaid: true);
+      });
     });
 
     return isPaymentSuccessful;
@@ -399,6 +396,8 @@ class _PaymentScreenState extends CheckoutBaseState<PaymentScreen> {
     required bool isPaid,
   }) async {
     var orderProvider = Provider.of<CartProvider>(context, listen: false);
+    var emailProvider = Provider.of<EmailProvider>(context, listen: false);
+
     orderProvider.createOrder(
         customerId: customerId,
         paymentMethod: paymentMethod,
@@ -406,6 +405,20 @@ class _PaymentScreenState extends CheckoutBaseState<PaymentScreen> {
         transactionId: _getReference(),
         billing: widget.billing,
         shipping: widget.shipping);
+    emailProvider.sendEmail(
+        serviceId: 'service_94x1tu4',
+        templateId: 'template_j5f615v',
+        userId: '3n6j-403VOQJFoIaB',
+        parameters: {
+          'user_name': username,
+          'user_email': customerEmail,
+          'body': '''''
+Customer name: ${widget.billing!.firstName} ${widget.billing!.lastName}
+Customer email: $customerEmail
+Customer id: $customerId
+Order reference: ${_getReference()}
+'''
+        });
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         isLoading = false;

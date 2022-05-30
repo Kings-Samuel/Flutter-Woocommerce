@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:woocommerce/main.dart';
+import 'package:woocommerce/presentations/screens/orders_screen.dart';
 import 'package:woocommerce/presentations/widgets/elevated_button.dart';
 import 'package:woocommerce/utils/checkout_base.dart';
 
@@ -55,14 +56,16 @@ class _OrderSuccessScreenState extends CheckoutBaseState<OrderSuccessScreen> {
                 ),
                 const SizedBox(height: 20.0),
                 elevatedButton(
+                    icon: Icons.remove_red_eye, backgroundColor: Colors.red, text: 'View Order', onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const OrdersScreen()));
+                    }),
+                elevatedButton(
                     icon: Icons.done,
                     backgroundColor: Colors.green,
                     text: 'Done',
                     onPressed: () {
                       Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => const MyApp()),
-                          (route) => false);
+                          context, MaterialPageRoute(builder: (context) => const MyApp()), (route) => false);
                     })
               ],
             )));

@@ -6,13 +6,16 @@ import 'package:woocommerce/presentations/screens/base/homescreen.dart';
 import 'package:woocommerce/presentations/screens/base/shop_screen.dart';
 import 'package:woocommerce/presentations/screens/delete_acct.dart';
 import 'package:woocommerce/presentations/screens/login.dart';
+import 'package:woocommerce/presentations/screens/order_cancellation_screen.dart';
 import 'package:woocommerce/presentations/screens/order_details_screen.dart';
 import 'package:woocommerce/presentations/screens/payment_screen.dart';
 import 'package:woocommerce/presentations/screens/product_details.dart';
 import 'package:woocommerce/presentations/screens/products_by_category.dart';
 import 'package:woocommerce/presentations/screens/products_by_tag_id.dart';
+import 'package:woocommerce/presentations/screens/report_bugs.dart';
 import 'package:woocommerce/presentations/screens/saved_cards_screen.dart';
 import 'package:woocommerce/presentations/screens/signup.dart';
+import 'package:woocommerce/presentations/screens/suggest_feature.dart';
 import 'package:woocommerce/presentations/widgets/orders_cancelled.dart';
 import 'package:woocommerce/presentations/widgets/orders_processing.dart';
 import 'package:woocommerce/presentations/widgets/orders_shipping.dart';
@@ -27,6 +30,7 @@ import '../presentations/widgets/orders_delivered.dart';
 import '../presentations/widgets/product_details_widget.dart';
 import 'providers/cart_provider.dart';
 import 'providers/customer_details_provider.dart';
+import 'providers/email_provider.dart';
 import 'providers/loader_provider.dart';
 import 'providers/product_provider.dart';
 import 'providers/social_login.dart';
@@ -121,15 +125,19 @@ List<SingleChildWidget> providers = [
     create: (context) => CardsProvider(),
     child: const SavedCardsScreen(),
   ),
-    ChangeNotifierProvider(
+  ChangeNotifierProvider(
     create: (context) => CardsProvider(),
     child: const PaymentScreen(),
+  ),
+  ChangeNotifierProvider(
+    create: (context) => CardsProvider(),
+    child: const LoginScreen(),
   ),
 
   //delete acct provider
   ChangeNotifierProvider(
     create: (context) => DeleteAccountProvider(),
-    child: const DeleteAccount(userEmail: '', userName: '',),
+    child: const DeleteAccount(email: '', username: '',),
   ),
 
   //order provider
@@ -153,4 +161,31 @@ List<SingleChildWidget> providers = [
     create: (context) => OrderProvider(),
     child: OrderDetailsScreen(model: OrderModel(lineItems: []),),
   ),
+
+  //email provider
+  ChangeNotifierProvider(
+    create: (context) => EmailProvider(),
+    child: const SignUpScreen()
+  ),
+  ChangeNotifierProvider(
+    create: (context) => EmailProvider(),
+    child: const ReportBugs(email: '', username: '',)
+  ),
+  ChangeNotifierProvider(
+    create: (context) => EmailProvider(),
+    child: const SuggestFeature(email: '', username: '',)
+  ),
+  ChangeNotifierProvider(
+    create: (context) => EmailProvider(),
+    child: const PaymentScreen()
+  ),
+  ChangeNotifierProvider(
+    create: (context) => EmailProvider(),
+    child: const DeleteAccount(email: '', username: '',),
+  ),
+  ChangeNotifierProvider(
+    create: (context) => EmailProvider(),
+    child: const OrderCancellattionScreen(orderId: '', userEmail: '', userName: '',)
+  ),
+
 ];

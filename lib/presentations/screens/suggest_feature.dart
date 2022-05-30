@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:woocommerce/presentations/widgets/elevated_button.dart';
+import 'package:woocommerce/presentations/widgets/snackbar.dart';
+import '../../services/providers/email_provider.dart';
 
 class SuggestFeature extends StatefulWidget {
-  const SuggestFeature(
-      {Key? key})
-      : super(key: key);
+  final String username;
+  final String email;
+  const SuggestFeature({Key? key, required this.username, required this.email}) : super(key: key);
 
   @override
   State<SuggestFeature> createState() => _SuggestFeatureState();
@@ -15,9 +18,12 @@ class _SuggestFeatureState extends State<SuggestFeature> {
   GlobalKey<FormState> globalKey = GlobalKey<FormState>();
   String? report;
   FocusNode focusNode = FocusNode();
+  TextEditingController message = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    var emailProvider = Provider.of<EmailProvider>(context);
+
     return Scaffold(
         backgroundColor: Colors.grey[200],
         appBar: AppBar(
@@ -25,11 +31,7 @@ class _SuggestFeatureState extends State<SuggestFeature> {
           backgroundColor: Colors.white,
           title: const Text(
             "Suggest Feature",
-            style: TextStyle(
-                fontFamily: 'baloo da 2',
-                fontWeight: FontWeight.w500,
-                fontSize: 18,
-                color: Colors.black),
+            style: TextStyle(fontFamily: 'baloo da 2', fontWeight: FontWeight.w500, fontSize: 18, color: Colors.black),
           ),
           leading: IconButton(
               onPressed: () {
@@ -45,11 +47,8 @@ class _SuggestFeatureState extends State<SuggestFeature> {
                 const SizedBox(height: 20),
                 const Text(
                   "Kindly help us get better by telling us how we can improve our services and customer experience. Your feedback is highly appreciated. Thank you",
-                  style: TextStyle( 
-                      fontFamily: 'baloo da 2',
-                      fontWeight: FontWeight.normal,
-                      fontSize: 14,
-                      color: Colors.black),
+                  style: TextStyle(
+                      fontFamily: 'baloo da 2', fontWeight: FontWeight.normal, fontSize: 14, color: Colors.black),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
@@ -58,6 +57,7 @@ class _SuggestFeatureState extends State<SuggestFeature> {
                   child: Column(children: <Widget>[
                     TextFormField(
                       maxLines: 3,
+                      controller: message,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontFamily: 'baloo da 2',
@@ -81,10 +81,7 @@ class _SuggestFeatureState extends State<SuggestFeature> {
                       decoration: InputDecoration(
                         hintText: 'Enter your feedback here',
                         hintStyle: const TextStyle(
-                            fontFamily: 'baloo da 2',
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            color: Colors.black54),
+                            fontFamily: 'baloo da 2', fontWeight: FontWeight.w500, fontSize: 14, color: Colors.black54),
                         errorStyle: const TextStyle(
                           fontFamily: 'baloo da 2',
                           fontWeight: FontWeight.w500,
@@ -105,28 +102,42 @@ class _SuggestFeatureState extends State<SuggestFeature> {
                     ),
                     const SizedBox(height: 20),
                     isApiCallProcess
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            ) :
-                        elevatedButton(
-                          icon: Icons.send, 
-                          text: 'Send',
-                          onPressed: () {
-                            if (globalKey.currentState!.validate()) {
-                          globalKey.currentState!.save();
-                          setState(() {
-                            isApiCallProcess = true;
-                          });
-                        }
-                          }
-                        ),
-                      ]),
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : elevatedButton(
+                            icon: Icons.send,
+                            text: 'Send',
+                            onPressed: () {
+                              if (globalKey.currentState!.validate()) {
+                                focusNode.unfocus();
+                                globalKey.currentState!.save();
+                                setState(() {
+                                  isApiCallProcess = true;
+                                });
+                                emailProvider.sendEmail(
+                                    serviceId: 'service_y7u4vu6',
+                                    templateId: 'template_zebdu95',
+                                    userId: 'rzOO7Q2LMKs_8SeqP',
+                                    parameters: {
+                                      'user_name': widget.username,
+                                      'user_email': widget.email,
+                                      'subject': 'Suggest Feature',
+                                      'body': message.text,
+                                    }).then((value) {
+                                  setState(() {
+                                    isApiCallProcess = false;
+                                    message.clear();
+                                  });
+                                  snackbar(context, 'Message Sent', Colors.white, Colors.green);
+                                });
+                              }
+                            }),
+                  ]),
                 ),
               ],
             ))));
   }
-
 }

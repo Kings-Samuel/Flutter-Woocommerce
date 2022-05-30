@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:woocommerce/presentations/widgets/elevated_button.dart';
+import 'package:woocommerce/presentations/widgets/snackbar.dart';
+import '../../services/providers/email_provider.dart';
 
 class ReportBugs extends StatefulWidget {
+  final String username;
+  final String email;
   const ReportBugs(
-      {Key? key})
+      {Key? key, required this.username, required this.email})
       : super(key: key);
 
   @override
@@ -15,9 +20,12 @@ class _ReportBugsState extends State<ReportBugs> {
   GlobalKey<FormState> globalKey = GlobalKey<FormState>();
   String? report;
   FocusNode focusNode = FocusNode();
+  TextEditingController message = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    var emailProvider = Provider.of<EmailProvider>(context);
+
     return Scaffold(
         backgroundColor: Colors.grey[200],
         appBar: AppBar(
@@ -58,6 +66,7 @@ class _ReportBugsState extends State<ReportBugs> {
                   child: Column(children: <Widget>[
                     TextFormField(
                       maxLines: 3,
+                      controller: message,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontFamily: 'baloo da 2',
@@ -116,11 +125,28 @@ class _ReportBugsState extends State<ReportBugs> {
                           text: 'Send',
                           onPressed: () {
                             if (globalKey.currentState!.validate()) {
-                          globalKey.currentState!.save();
-                          setState(() {
-                            isApiCallProcess = true;
-                          });
-                        }
+                              focusNode.unfocus();
+                                globalKey.currentState!.save();
+                                setState(() {
+                                  isApiCallProcess = true;
+                                });
+                                emailProvider.sendEmail(
+                                    serviceId: 'service_y7u4vu6',
+                                    templateId: 'template_zebdu95',
+                                    userId: 'rzOO7Q2LMKs_8SeqP',
+                                    parameters: {
+                                      'user_name': widget.username,
+                                      'user_email': widget.email,
+                                      'subject': 'Bug Report',
+                                      'body': message.text,
+                                    }).then((value) {
+                                  setState(() {
+                                    isApiCallProcess = false;
+                                    message.clear();
+                                  });
+                                  snackbar(context, 'Message Sent', Colors.white, Colors.green);
+                                });
+                              }
                           }
                         ),
                       ]),

@@ -1,5 +1,11 @@
 import 'dart:developer';
 log('your message here');
 
+/////////paypal//////////
 sb-uqx5b8986025@personal.example.com
 ^kO026/+
+
+////email JS///////
+public key: rzOO7Q2LMKs_8SeqP
+private key: 29dcqRy91LZwHGhBKiuK8
+
